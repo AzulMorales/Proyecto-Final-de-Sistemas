@@ -26,7 +26,7 @@ class sistema_operativo:
     def agregar_pedido(self, nombre, tiempo):
         proceso = Proceso(nombre, tiempo)
         self.cola_pedidos.append(proceso)
-        self.mostrar(f"Pedido agregado: {proceso.nombre} (tiempo: {tiempo} segunndos)")
+        self.mostrar(f"Pedido agregado: {proceso.nombre} (tiempo: {tiempo} segundos)", color="verde")
         
         if not self.procesando:
             self.procesar_pedidos()
