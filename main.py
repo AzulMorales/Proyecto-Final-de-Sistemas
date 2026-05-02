@@ -10,11 +10,14 @@ root= tk.Tk()
 root.title("Sistema de un Restaurante")
 root.geometry("800x600") 
 root.iconbitmap('recursos\\favicon.ico')
+root.configure(bg="#edcc8a")
 
 frame = tk.Frame(root)
 frame.pack(pady=10)
 text_area = tk.Text(root, width=70, height=30)
 text_area.pack()
+root.resizable(False, False)
+
 
 sistemaOp = sistema_operativo(root, text_area)
 
@@ -24,6 +27,8 @@ def pedir_tiempo(nombre_comida):
     ventana = tk.Toplevel(root)
     ventana.title("Tiempo de preparación")
     ventana.geometry("300x150")
+    ventana.resizable(False, False)
+
 
     ventana.update_idletasks()
     ancho = 300
