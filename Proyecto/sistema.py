@@ -84,6 +84,42 @@ class sistema_operativo:
     def limpiar_historial(self):
         self.historial_pedidos.clear()
         self.text_area.insert(tk.END, "\nHistorial limpiado correctamente.\n")
-        self.text_area.see(tk.END) 
+        self.text_area.see(tk.END)
 
+    def eliminar_procesos(self, id_objetivo):
+        # 1. Inicializamos la variable antes de cualquier bucle
+        encontrado = False
+        nueva_cola = []
+
+        # 2. Filtramos la cola de pedidos
+        for pedido in self.cola_pedidos:
+            if pedido['id'] == id_objetivo:
+                encontrado = True
+                self.text_area.insert(tk.END, f"\nCancelando: '{pedido['comida']}' (ID: {id_objetivo}) de la cola.\n")
+            else:
+                nueva_cola.append(pedido)
+
+        # 3. Actualizamos la cola con los que NO fueron eliminados
+        self.cola_pedidos = nueva_cola
+
+        # 4. También lo quitamos del historial 
+        self.historial_pedidos = [p for p in self.historial_pedidos if p['id'] != id_objetivo]
+
+        # 5. Verificamos si no se encontró
+        if not encontrado:
+            self.text_area.insert(tk.END, f"\nEl ID {id_objetivo} no se encontró en la cola de espera.\n")
+        
+        self.text_area.see(tk.END)
+
+    def consultar_cola_actual(self):
+        if not self.cola_pedidos:
+            self.text_area.insert(tk.END, "\n--- La cola está vacía ---\n")
+            return
+        
+        self.text_area.insert(tk.END, "\n--- Pedidos esperando en cola (ID | Nombre) ---\n")
+        for pedido in self.cola_pedidos:
+            self.text_area.insert(tk.END, f"ID: {pedido['id']} -> {pedido['comida']}\n")
+        self.text_area.insert(tk.END, "-------------------------------------------\n")
+        self.text_area.see(tk.END)
+   
 

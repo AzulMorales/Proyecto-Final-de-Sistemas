@@ -171,9 +171,22 @@ def crear_pedidos():
             if not tiempo.isdigit():
                 messagebox.showerror("Error", "Debes ingresar un número válido.")
                 return
-            sistemaOp.agregar_pedido(len(sistemaOp.historial_pedidos) + 1,nombre_comida,int(tiempo))
-            ventana2.destroy()
+            
+            # Calculamos el ID basado en el historial para que sea único
+            nuevo_id = len(sistemaOp.historial_pedidos) + 1
+            
+            # Enviamos los datos al sistema
+            sistemaOp.agregar_pedido(nuevo_id, nombre_comida, int(tiempo))
+            
+            # Notificamos al usuario qué ID se generó
+            messagebox.showinfo("Pedido Creado", 
+                                f"Producto: {nombre_comida}\n"
+                                f"ID Asignado: {nuevo_id}\n"
+                                f"Tiempo: {tiempo} segundos")
+            
+            ventana2.destroy() # Cerramos la ventanita emergente
 
+        # El botón de la ventana emergente llama a esta nueva versión de confirmar
         ttk.Button(ventana2, text="Aceptar", command=confirmar).pack(pady=10)
 
 
@@ -230,26 +243,46 @@ def ver_procesos():
 
 
 def eliminar_procesos():
-    ventana= crear_ventana("Eliminar Procesos")
+    ventana = crear_ventana("Eliminar Procesos")
     ventana.iconbitmap('recursos\\favicon.ico')
 
-    # Frame para botones
-    frame_botones = tk.Frame(ventana.contenido, bg="#B22222")
-    frame_botones.pack(side="top", pady=10)
+    # Frame para controles
+    frame_controles = tk.Frame(ventana.contenido, bg="#B22222")
+    frame_controles.pack(side="top", pady=20)
 
-    # Área de texto
-    text_area = tk.Text(ventana.contenido, width=70, height=30)
+    # Etiqueta y entrada para el ID
+    tk.Label(frame_controles, text="Ingrese ID del pedido:", font="Helvetica 12 bold", 
+             bg="#B22222", fg="white").pack(side="left", padx=5)
+    
+    entrada_id = tk.Entry(frame_controles, font="Helvetica 12", width=10)
+    entrada_id.pack(side="left", padx=5)
+
+    # Área de texto para mensajes
+    text_area = tk.Text(ventana.contenido, width=70, height=25)
     text_area.pack(pady=10)
 
     sistemaOp.set_contexto(ventana, text_area)
 
-    #Agregar botones
-    boton_elim_proceso = tk.Button(frame_botones,text="Eliminar Procesos",font="Helvetica 13", background="#DDB885",borderwidth=2,
-                                       command=lambda: cambiar_ventana(eliminar_procesos))
-    boton_elim_proceso.pack(side= "left", pady=10)
+    # Función interna para conectar la interfaz con el núcleo
+    def ejecutar_eliminacion():
+        id_texto = entrada_id.get().strip()
+        if id_texto.isdigit():
+            id_num = int(id_texto)
+            # Llamamos al método del sistema operativo
+            sistemaOp.eliminar_procesos(id_num)
+            entrada_id.delete(0, tk.END) # Limpiar campo
+        else:
+            messagebox.showerror("Error", "Por favor, ingrese un número de ID válido.")
 
-    boton_elim_proceso.bind("<Enter>", tocar_boton)
-    boton_elim_proceso.bind("<Leave>", no_tocar_boton)
+    # Botón de acción (Corregido: ahora llama a ejecutar_eliminacion)
+    boton_confirmar = tk.Button(frame_controles, text="Eliminar Pedido", font="Helvetica 13", 
+                                background="#DDB885", borderwidth=2, command=ejecutar_eliminacion)
+    boton_confirmar.pack(side="left", padx=10)
+
+    boton_confirmar.bind("<Enter>", tocar_boton)
+    boton_confirmar.bind("<Leave>", no_tocar_boton)      
+
+  
 
 crear_menu(root)
 #Esto tiene que ir al final del código, por lo que si se va a agregar algo, recuerde eso
