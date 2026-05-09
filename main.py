@@ -226,6 +226,15 @@ def ver_procesos():
 
    
     #Agregar botones
+    def intentar_limpiar():
+        # Llamamos al método y capturamos si tuvo éxito o no
+        exito = sistemaOp.limpiar_historial()
+        if not exito:
+            messagebox.showwarning("Acción no permitida", 
+                "Hay pedidos en espera. Debes procesarlos o eliminarlos antes de limpiar el historial.")
+
+    
+    
     boton_procesar = tk.Button(frame_botones, text="Procesar pedidos", font="Helvetica 13" ,background="#DDB885", command=sistemaOp.procesar_pedidos)
     boton_procesar.pack( side="left", padx=10)
     boton_procesar.bind("<Enter>", tocar_boton)
@@ -236,51 +245,58 @@ def ver_procesos():
     boton_historial.bind("<Enter>", tocar_boton)
     boton_historial.bind("<Leave>", no_tocar_boton)
 
-    boton_limpiar = tk.Button(frame_botones, text="Limpiar historial", font="Helvetica 13" , background="#DDB885", command=sistemaOp.limpiar_historial)
+    boton_limpiar = tk.Button(frame_botones, text="Limpiar historial", 
+                              font="Helvetica 13", background="#DDB885", 
+                              command=intentar_limpiar)
     boton_limpiar.pack(side="left",padx=10)
     boton_limpiar.bind("<Enter>", tocar_boton)
     boton_limpiar.bind("<Leave>", no_tocar_boton)
 
 
+
+
+    # Función interna para conectar la interfaz con el núcleo
 def eliminar_procesos():
     ventana = crear_ventana("Eliminar Procesos")
     ventana.iconbitmap('recursos\\favicon.ico')
 
-    # Frame para controles
+    # Frame para controles superiores
     frame_controles = tk.Frame(ventana.contenido, bg="#B22222")
-    frame_controles.pack(side="top", pady=20)
+    frame_controles.pack(side="top", pady=10)
 
-    # Etiqueta y entrada para el ID
-    tk.Label(frame_controles, text="Ingrese ID del pedido:", font="Helvetica 12 bold", 
-             bg="#B22222", fg="white").pack(side="left", padx=5)
-    
-    entrada_id = tk.Entry(frame_controles, font="Helvetica 12", width=10)
+    # NUEVO: Botón para consultar qué pedidos hay y sus IDs
+    boton_consultar = tk.Button(frame_controles, text="Ver IDs en Cola", font="Helvetica 11 bold",
+                                    background="#DDB885", command=sistemaOp.consultar_cola_actual)
+    boton_consultar.pack(pady=5)
+
+    # Frame para la entrada de ID
+    frame_input = tk.Frame(ventana.contenido, bg="#B22222")
+    frame_input.pack(side="top", pady=10)
+
+    tk.Label(frame_input, text="ID a eliminar:", font="Helvetica 12 bold", 
+                bg="#B22222", fg="white").pack(side="left", padx=5)
+        
+    entrada_id = tk.Entry(frame_input, font="Helvetica 12", width=10)
     entrada_id.pack(side="left", padx=5)
 
-    # Área de texto para mensajes
-    text_area = tk.Text(ventana.contenido, width=70, height=25)
+        # Área de texto
+    text_area = tk.Text(ventana.contenido, width=70, height=20)
     text_area.pack(pady=10)
 
     sistemaOp.set_contexto(ventana, text_area)
 
-    # Función interna para conectar la interfaz con el núcleo
     def ejecutar_eliminacion():
         id_texto = entrada_id.get().strip()
         if id_texto.isdigit():
             id_num = int(id_texto)
-            # Llamamos al método del sistema operativo
             sistemaOp.eliminar_procesos(id_num)
-            entrada_id.delete(0, tk.END) # Limpiar campo
+            entrada_id.delete(0, tk.END)
         else:
-            messagebox.showerror("Error", "Por favor, ingrese un número de ID válido.")
+            messagebox.showerror("Error", "Ingrese un número de ID válido.")
 
-    # Botón de acción (Corregido: ahora llama a ejecutar_eliminacion)
-    boton_confirmar = tk.Button(frame_controles, text="Eliminar Pedido", font="Helvetica 13", 
-                                background="#DDB885", borderwidth=2, command=ejecutar_eliminacion)
-    boton_confirmar.pack(side="left", padx=10)
-
-    boton_confirmar.bind("<Enter>", tocar_boton)
-    boton_confirmar.bind("<Leave>", no_tocar_boton)      
+    boton_confirmar = tk.Button(frame_input, text="Confirmar Eliminación", font="Helvetica 11", 
+                                background="#F57C00", borderwidth=2, command= ejecutar_eliminacion)
+    boton_confirmar.pack(side="left", padx=10)     
 
   
 

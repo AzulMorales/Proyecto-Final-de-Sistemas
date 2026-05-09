@@ -82,9 +82,16 @@ class sistema_operativo:
         self.text_area.see(tk.END) 
 
     def limpiar_historial(self):
+        if self.cola_pedidos:
+            self.text_area.insert(tk.END, "\n[BLOQUEADO] No se puede limpiar el historial mientras existan procesos en la cola.\n")
+            self.text_area.see(tk.END)
+            # Retornamos False para que la interfaz sepa que no se pudo limpiar
+            return False
+        
         self.historial_pedidos.clear()
         self.text_area.insert(tk.END, "\nHistorial limpiado correctamente.\n")
         self.text_area.see(tk.END)
+        return True
 
     def eliminar_procesos(self, id_objetivo):
         # 1. Inicializamos la variable antes de cualquier bucle
