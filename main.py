@@ -169,7 +169,7 @@ def crear_pedidos():
         def confirmar():
             tiempo = entrada.get().strip()
             if not tiempo.isdigit():
-                messagebox.showerror("Error", "Debes ingresar un número válido.")
+                messagebox.showerror("Error", "Debes ingresar un número válido.",parent=ventana2)
                 return
             
             # Calculamos el ID basado en el historial para que sea único
@@ -182,7 +182,7 @@ def crear_pedidos():
             messagebox.showinfo("Pedido Creado", 
                                 f"Producto: {nombre_comida}\n"
                                 f"ID Asignado: {nuevo_id}\n"
-                                f"Tiempo: {tiempo} segundos")
+                                f"Tiempo: {tiempo} segundos", parent=ventana2)
             
             ventana2.destroy() # Cerramos la ventanita emergente
 
@@ -224,14 +224,13 @@ def ver_procesos():
 
     sistemaOp.set_contexto(ventana, text_area)
 
-   
     #Agregar botones
     def intentar_limpiar():
         # Llamamos al método y capturamos si tuvo éxito o no
         exito = sistemaOp.limpiar_historial()
         if not exito:
             messagebox.showwarning("Acción no permitida", 
-                "Hay pedidos en espera. Debes procesarlos o eliminarlos antes de limpiar el historial.")
+                "Hay pedidos en espera. Debes procesarlos o eliminarlos antes de limpiar el historial.", parent=ventana)
 
     
     
@@ -268,6 +267,9 @@ def eliminar_procesos():
     boton_consultar = tk.Button(frame_controles, text="Ver IDs en Cola", font="Helvetica 11 bold",
                                     background="#DDB885", command=sistemaOp.consultar_cola_actual)
     boton_consultar.pack(pady=5)
+    boton_consultar.bind("<Enter>", tocar_boton)
+    boton_consultar.bind("<Leave>", no_tocar_boton)
+
 
     # Frame para la entrada de ID
     frame_input = tk.Frame(ventana.contenido, bg="#B22222")
@@ -292,11 +294,12 @@ def eliminar_procesos():
             sistemaOp.eliminar_procesos(id_num)
             entrada_id.delete(0, tk.END)
         else:
-            messagebox.showerror("Error", "Ingrese un número de ID válido.")
+            messagebox.showerror("Error", "Ingrese un número de ID válido.", parent=ventana)
 
     boton_confirmar = tk.Button(frame_input, text="Confirmar Eliminación", font="Helvetica 11", 
-                                background="#F57C00", borderwidth=2, command= ejecutar_eliminacion)
+                                background="#E63A3A", borderwidth=2, command= ejecutar_eliminacion)
     boton_confirmar.pack(side="left", padx=10)     
+    
 
   
 
